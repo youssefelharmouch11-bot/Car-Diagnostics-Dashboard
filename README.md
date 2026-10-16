@@ -6,17 +6,17 @@
 
 ## 📸 Aperçu Visuel du Projet
 
-### 1. Écran de Connexion
+### 1. Vue Générale & Matériel
+![Interface](interface.jpg)
+
+### 2. Écran de Connexion
 ![Connexion](login_preview.jpg.png)
 
-### 2. Interface Véhicule & Dashboard
+### 3. Interface Véhicule & Dashboard
 ![Dashboard](Dashboard.png)
 
-### 3. Console de Diagnostic UDS
+### 4. Console de Diagnostic UDS
 ![UDS](UDS.png)
-
-### 4. Vue Générale & Matériel
-![Interface](interface.jpg)
 
 ## 📌 Aperçu du Projet
 Ce projet consiste à concevoir et prototyper un système embarqué intelligent pour le suivi de paramètres physiques et électriques (température, humidité, tension de batterie), combinant la technologie IoT et les bases du diagnostic automobile (UDS).
