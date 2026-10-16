@@ -6,16 +6,19 @@
 
 ## 📸 Aperçu Visuel du Projet
 
-### 1. Vue Générale & Matériel
+### 1. Vue Générale
 ![Interface](interface.jpg)
 
-### 2. Écran de Connexion
+### 2. Suivi du Véhicule
+![Vue Véhicule](Vehicule%20.png)
+
+### 3. Écran de Connexion
 ![Connexion](login_preview.jpg.png)
 
-### 3. Interface Véhicule & Dashboard
+### 4. Interface Véhicule & Dashboard
 ![Dashboard](Dashboard.png)
 
-### 4. Console de Diagnostic UDS
+### 5. Console de Diagnostic UDS
 ![UDS](UDS.png)
 
 ## 📌 Aperçu du Projet
