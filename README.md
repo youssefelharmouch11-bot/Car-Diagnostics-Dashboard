@@ -1,13 +1,13 @@
 # 🚗 CarDiagnostics-Dashboard
 
 > **Prototype de tableau de bord de diagnostic automobile connecté (ESP32, Flask, UDS ISO 14229)**  
-> *Développé par Youssef El Harmouch dans le cadre du Master 2 en Systèmes Embarqués et Robotique (FST Al Hoceima).*
+> *Développé par Youssef El Harmouch dans le cadre du Master en Systèmes Embarqués et Robotique (FST Al Hoceima).*
 
 ---
 
 ## 📸 Aperçu Visuel du Projet
 
-### 1. Prototype Hardware & Notifications Mobile Push
+### 1. Prototype Hardware & Notifications Mobile
 ![Interface](interface.jpg)
 
 ### 2. Écran de Connexion Sécurisé
@@ -24,92 +24,8 @@
 
 ---
 
-## 📌 Overview
-This project is a real-time car diagnostics and telematics dashboard developed to monitor vehicle environmental conditions, battery status, and process automotive diagnostic services. It uses an **ESP32** microcontroller to acquire sensor data (temperature and humidity via DHT11, along with battery voltage) and transmits it to a **Python Flask** backend over HTTP POST requests. 
-
-The web dashboard features secure user authentication, real-time gauges, historical charts, mobile push notifications via **Ntfy**, and a dedicated console emulating standard **ISO 14229 Unified Diagnostic Services (UDS)**.
-
----
-
-## 🛠️ Requirements
-
-### Hardware
-- **ESP32** development board
-- **DHT11** temperature and humidity sensor
-- **Voltage Divider Network** (for vehicle battery monitoring)
-- **4.7kΩ to 10kΩ pull-up resistor** (for DHT11 DATA line)
-- **Breadboard & Jumper Wires**
-- **USB Cable** for ESP32 power & programming
-
-### Software
-- **Arduino IDE** (with ESP32 board support)
-- **Python 3.x**
-- **Flask** (`pip install flask`)
-- **Flask-CORS** (`pip install flask-cors`)
-- **Requests** (`pip install requests`)
-- **SQLite3**
-
----
-
-## ⚙️ Setup Instructions
-
-### 1. ESP32 Setup
-1. **Install Arduino IDE:**
-   - Download and install the Arduino IDE from [arduino.cc](https://www.arduino.cc/).
-   - Add ESP32 board support:
-     - Go to **File > Preferences**, add `https://dl.espressif.com/dl/package_esp32_index.json` to **Additional Boards Manager URLs**.
-     - Go to **Tools > Board > Boards Manager**, search for **ESP32**, and install the `esp32` package.
-   - Install the required libraries:
-     - Go to **Sketch > Include Library > Manage Libraries**, search for **DHT sensor library** by Adafruit, and install it.
-
-2. **Connect the Hardware:**
-   - **VCC (DHT11)** → 3.3V / 5V (ESP32)
-   - **GND (DHT11)** → GND (ESP32)
-   - **DATA (DHT11)** → GPIO 4 (ESP32)
-   - Add a **4.7kΩ to 10kΩ pull-up resistor** between DATA and VCC.
-   - **Battery Sensing Analog Pin** → GPIO 34 (via resistor divider).
-
-3. **Upload the ESP32 Code:**
-   - Open `esp32_car_monitor.ino` in the Arduino IDE.
-   - Update the Wi-Fi credentials and server endpoint:
-     ```cpp
-     const char* ssid = "YOUR_WIFI_SSID";
-     const char* password = "YOUR_WIFI_PASSWORD";
-     const char* serverName = "[http://192.168.1.](http://192.168.1.)X:5000/api/update";
-     ```
-   - Go to **Tools > Board**, select **ESP32 Dev Module**.
-   - Select the correct COM port under **Tools > Port**.
-   - Click the **Upload** button.
-
----
-
-### 2. Flask Server Setup
-
-1. **Set Up Python Environment:**
-   - Install Python 3.x on your system.
-   - Clone the repository and navigate to the project directory:
-     ```bash
-     git clone [https://github.com/youssefelharmouch11-bot/Car-Diagnostics-Dashboard.git](https://github.com/youssefelharmouch11-bot/Car-Diagnostics-Dashboard.git)
-     cd Car-Diagnostics-Dashboard
-     ```
-   - Install dependencies:
-     ```bash
-     pip install flask flask-cors requests
-     ```
-
-2. **Run the Flask Server:**
-   - Launch the application:
-     ```bash
-     python server.py
-     ```
-   - The server will run locally at `http://127.0.0.1:5000` and on your local IP address (e.g., `http://192.168.1.X:5000`).
-
----
-
-### 3. Access the Dashboard
-1. Open your web browser and navigate to `http://localhost:5000` or your local IP.
-2. Log in with your credentials to access the telemetry and diagnostic interface.
-3. View real-time temperature, humidity, battery voltage, and test UDS diagnostic requests (`19 02 FF`, `22 F1 90`, etc.).
+## 📌 Aperçu du Projet
+Ce projet consiste à concevoir et prototyper un système embarqué intelligent pour la télémesure et le suivi de paramètres physiques et électriques (température, humidité, tension de batterie), combinant la technologie IoT et les fondamentaux du diagnostic automobile via le protocole standardisé **UDS (ISO 14229)**.
 
 ---
 
@@ -121,6 +37,15 @@ Le protocole **UDS (Unified Diagnostic Services)**, normalisé par l'**ISO 14229
 Le fonctionnement repose sur une architecture **Client-Serveur** :
 - **Le Client (Tester) :** L'outil de diagnostic ou l'interface web qui envoie des requêtes.
 - **Le Serveur (ECU / ESP32) :** Le calculateur embarqué qui traite les requêtes, renvoie les données ou effectue les actions demandées.
+
+### 📬 Structure des Trames de Diagnostic
+
+1. **Requête (Request Frame) :**  
+   Chaque service est identifié par un **SID (Service Identifier)** sous forme d'un octet hexadécimal (ex: `0x19` pour la lecture des codes défauts) suivi de sous-fonctions ou paramètres.
+2. **Réponse Positive (Positive Response Frame) :**  
+   Formatée sous la forme **RSID = SID + `0x40`** (ex: pour `0x19`, la réponse commence par `0x59`).
+3. **Réponse Négative (Negative Response - NRC) :**  
+   Formatée sous la forme `0x7F [SID Demande] [Code NRC]` en cas d'erreur ou d'accès refusé.
 
 ### 🛠️ Services UDS Implémentés dans ce Projet
 
@@ -134,8 +59,39 @@ Le fonctionnement repose sur une architecture **Client-Serveur** :
 
 ---
 
-## 📜 License
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+## 🚀 Fonctionnalités Clés
+- **ESP32 & DHT11 :** Collecte des données environnementales et de la tension batterie, puis transmission via HTTP POST vers le serveur Flask.
+- **Serveur Flask :** Traitement des données, journalisation SQLite et gestion de l'interface web de supervision.
+- **Tableau de Bord Web :** Interface interactive, ergonomique et sécurisée pour la visualisation en temps réel.
+- **Diagnostics UDS (ISO 14229) :** Émulation complète des trames et services de diagnostic automobile.
+- **Alertes Push Mobile :** Notification en temps réel sur smartphone via l'API Ntfy en cas de dépassement de seuils critiques.
+
+---
+
+## 🛠️ Technologies & Outils
+
+| Domaine | Technologies & Outils Utilisés |
+| :--- | :--- |
+| **Hardware & Embarqué** | ESP32, Capteur DHT11, Diviseur de tension |
+| **Langages & Firmware** | C/C++ (Arduino IDE), Python 3 (Flask) |
+| **Frontend & Web** | HTML5, CSS3, JavaScript |
+| **Normes & Protocoles** | Wi-Fi, HTTP POST, UDS (ISO 14229), API Ntfy |
+| **Environnement** | VS Code, Arduino IDE, Git / GitHub |
+
+---
+
+## ⚙️ Étapes de Réalisation
+1. **Analyse & Conception :** Modélisation de l'architecture du système embarqué et des flux de données.
+2. **Développement Embarqué :** Programmation de l'ESP32 en C/C++ pour la lecture des capteurs et la communication sans fil.
+3. **Mise en Place du Backend :** Développement du serveur Flask pour la réception, le traitement des trames et la gestion des services UDS.
+4. **Interface Web & Tests :** Création du dashboard interactif et validation de la chaîne complète de diagnostic.
+
+---
+
+## 📊 Résultats Obtenus
+- Remontée fiable et en temps réel des données capteurs et de la tension batterie.
+- Interface de supervision opérationnelle et ergonomique avec authentification sécurisée.
+- Validation expérimentale de la chaîne IoT et de l'émulation du protocole UDS ISO 14229.
 
 ---
 
