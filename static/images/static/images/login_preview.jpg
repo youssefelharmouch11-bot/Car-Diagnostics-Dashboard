@@ -1,7 +1,0 @@
-# 🚗 CarDiagnostics-Dashboard
-
-![Aperçu Général](interface.jpg)
-
-![Interface de Connexion](login_preview.jpg)
-
-> Prototype de tableau de bord de diagnostic automobile connecté (ESP32, Flask, UDS ISO 14229). Développé dans le cadre du Master en Systèmes Embarqués et Robotique.
