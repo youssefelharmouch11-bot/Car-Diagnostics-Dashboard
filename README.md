@@ -24,8 +24,10 @@
 
 ---
 
-## 📌 Aperçu du Projet
+## 📌 Aperçu du Projet / Overview
 Ce projet consiste à concevoir et prototyper un système embarqué intelligent pour la télémesure et le suivi de paramètres physiques et électriques (température, humidité, tension de batterie), combinant la technologie IoT et les fondamentaux du diagnostic automobile via le protocole standardisé **UDS (ISO 14229)**.
+
+It uses an **ESP32** microcontroller to acquire sensor data and transmit it to a **Python Flask** backend over HTTP POST. The system integrates real-time telemetry gauges, SQLite database logging, instant mobile notifications via **Ntfy**, and a dedicated web-based diagnostic console emulating standard automotive UDS frames.
 
 ---
 
@@ -39,13 +41,9 @@ Le fonctionnement repose sur une architecture **Client-Serveur** :
 - **Le Serveur (ECU / ESP32) :** Le calculateur embarqué qui traite les requêtes, renvoie les données ou effectue les actions demandées.
 
 ### 📬 Structure des Trames de Diagnostic
-
-1. **Requête (Request Frame) :**  
-   Chaque service est identifié par un **SID (Service Identifier)** sous forme d'un octet hexadécimal (ex: `0x19` pour la lecture des codes défauts) suivi de sous-fonctions ou paramètres.
-2. **Réponse Positive (Positive Response Frame) :**  
-   Formatée sous la forme **RSID = SID + `0x40`** (ex: pour `0x19`, la réponse commence par `0x59`).
-3. **Réponse Négative (Negative Response - NRC) :**  
-   Formatée sous la forme `0x7F [SID Demande] [Code NRC]` en cas d'erreur ou d'accès refusé.
+1. **Requête (Request Frame) :** Chaque service est identifié par un **SID (Service Identifier)** en hexadécimal (ex: `0x19` pour la lecture des DTCs) suivi de sous-fonctions ou paramètres.
+2. **Réponse Positive (Positive Response Frame) :** Formatée sous la forme **RSID = SID + `0x40`** (ex: pour `0x19`, la réponse commence par `0x59`).
+3. **Réponse Négative (Negative Response - NRC) :** Formatée sous la forme `0x7F [SID Demande] [Code NRC]` en cas d'erreur ou d'accès refusé.
 
 ### 🛠️ Services UDS Implémentés dans ce Projet
 
@@ -68,34 +66,39 @@ Le fonctionnement repose sur une architecture **Client-Serveur** :
 
 ---
 
-## 🛠️ Technologies & Outils
+## 🛠️ Requirements & System Setup
 
-| Domaine | Technologies & Outils Utilisés |
-| :--- | :--- |
-| **Hardware & Embarqué** | ESP32, Capteur DHT11, Diviseur de tension |
-| **Langages & Firmware** | C/C++ (Arduino IDE), Python 3 (Flask) |
-| **Frontend & Web** | HTML5, CSS3, JavaScript |
-| **Normes & Protocoles** | Wi-Fi, HTTP POST, UDS (ISO 14229), API Ntfy |
-| **Environnement** | VS Code, Arduino IDE, Git / GitHub |
+### Hardware Requirements
+- **ESP32** development board
+- **DHT11** temperature & humidity sensor
+- **Voltage Divider Network** (for battery monitoring)
+- **4.7kΩ to 10kΩ pull-up resistor**
+- **Breadboard & Jumper Wires**
+- **USB Cable** for ESP32 programming & power
 
----
-
-## ⚙️ Étapes de Réalisation
-1. **Analyse & Conception :** Modélisation de l'architecture du système embarqué et des flux de données.
-2. **Développement Embarqué :** Programmation de l'ESP32 en C/C++ pour la lecture des capteurs et la communication sans fil.
-3. **Mise en Place du Backend :** Développement du serveur Flask pour la réception, le traitement des trames et la gestion des services UDS.
-4. **Interface Web & Tests :** Création du dashboard interactif et validation de la chaîne complète de diagnostic.
-
----
-
-## 📊 Résultats Obtenus
-- Remontée fiable et en temps réel des données capteurs et de la tension batterie.
-- Interface de supervision opérationnelle et ergonomique avec authentification sécurisée.
-- Validation expérimentale de la chaîne IoT et de l'émulation du protocole UDS ISO 14229.
+### Software Requirements
+- **Arduino IDE** (with ESP32 board support)
+- **Python 3.x**
+- **Flask** (`pip install flask`)
+- **Flask-CORS** (`pip install flask-cors`)
+- **Requests** (`pip install requests`)
+- **SQLite3**
 
 ---
 
-<p align="center">
-  <b>Développé par Youssef El Harmouch</b><br>
-  <i>Étudiant Ingénieur en Systèmes Embarqués et Robotique</i>
-</p>
+## ⚙️ Setup Instructions
+
+### 1. ESP32 Firmware Setup
+1. Open **Arduino IDE**, navigate to **File > Preferences**, and add `https://dl.espressif.com/dl/package_esp32_index.json` to **Additional Boards Manager URLs**.
+2. Go to **Tools > Board > Boards Manager**, search for **ESP32**, and install the board package.
+3. Install the **DHT sensor library** by Adafruit via **Sketch > Include Library > Manage Libraries**.
+4. **Hardware Connections:**
+   - **VCC (DHT11)** → 3.3V / 5V
+   - **GND (DHT11)** → GND
+   - **DATA (DHT11)** → GPIO 4 (with a 4.7kΩ–10kΩ pull-up resistor to VCC)
+   - **Battery Analog Pin** → GPIO 34 (via voltage divider)
+5. Open `esp32_car_monitor.ino`, update your Wi-Fi credentials and server URL:
+   ```cpp
+   const char* ssid = "YOUR_WIFI_SSID";
+   const char* password = "YOUR_WIFI_PASSWORD";
+   const char* serverName = "[http://192.168.1.](http://192.168.1.)X:5000/api/update";
